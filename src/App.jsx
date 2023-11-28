@@ -1,15 +1,23 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import AddSales from './pages/Sales/AddSales';
+import React from "react";
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from "react-router-dom";
+// import AddSales from "./pages/Sales/AddSales";
 
-function App() {
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    // <Route path="/sales/add" element={<AddSales />} />
+  )
+);
+
+function App({ routes }) {
   return (
-    <Router>
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/sales" component={AddSales} />
-      </Switch>
-    </Router>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
 
