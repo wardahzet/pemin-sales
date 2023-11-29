@@ -7,6 +7,7 @@ import dummyDistributorNames from '../../DummyData';
 import jumlahDistributorIcons from '../../assets/SellStock.png'
 import BarChart from '../../Component/Chart/BarChart';
 import LineChart from '../../Component/Chart/LineChart';
+import BarChart2 from '../../Component/Chart/BarChart2';
 
 
 function AnalisisPage() {
@@ -21,6 +22,20 @@ function AnalisisPage() {
     console.log(totalSales)
     const totalDistributors = dummyDistributorNames.length;
     console.log(totalDistributors)
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('https://api.example.com/data');
+                setData(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
 
 
@@ -45,8 +60,8 @@ function AnalisisPage() {
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Total Stok Produk</div>
-                            <div className=' flex justify-center w-full mb-2'>
-                                <LineChart/>
+                            <div className='flex justify-center w-full mb-2'>
+                                <LineChart />
                             </div>
                         </div>
                     </div>
@@ -63,8 +78,11 @@ function AnalisisPage() {
                                 <img src={jumlahDistributorIcons} alt="" />
                             </div>
                         </div>
-                        <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2'>
+                        <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Distribusi produk ke distributor per bulan</div>
+                            <div className='flex justify-center  w-full mb-2'>
+                                <BarChart2 />
+                            </div>
 
                         </div>
 
