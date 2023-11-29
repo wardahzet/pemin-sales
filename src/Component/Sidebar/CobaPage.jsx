@@ -1,5 +1,5 @@
 import React from 'react'
-import BarChart from '../Component/Chart/BarChart'
+import BarChart from '../Chart/BarChart'
 
 function CobaPage() {
   return (
