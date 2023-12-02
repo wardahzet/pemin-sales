@@ -1,20 +1,27 @@
-import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import AnalisisPage from './Page/AnalisisPage/AnalisisPage'
-import CobaPage from './Component/Sidebar/CobaPage'
 
-function App() {
+import React from "react";
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from "react-router-dom";
+// import AddSales from "./pages/Sales/AddSales";
 
-
-  return (
-    <Router>
-      <Routes>
-        <Route path='/home' Component={AnalisisPage} />
-        <Route path='/analisis' Component={AnalisisPage} />
-        <Route path='/' Component={CobaPage} />
-      </Routes>
-    </Router>
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    // <Route path="/sales/add" element={<AddSales />} />
   )
+);
+
+
+function App({ routes }) {
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
+
 }
 
-export default App
+export default App;
