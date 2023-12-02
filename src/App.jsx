@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Route,
@@ -13,12 +14,14 @@ const router = createBrowserRouter(
   )
 );
 
+
 function App({ routes }) {
   return (
     <>
       <RouterProvider router={router} />
     </>
   );
+
 }
 
 export default App;
