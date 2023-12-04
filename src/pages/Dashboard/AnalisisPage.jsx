@@ -1,13 +1,13 @@
 import React from 'react'
 
-import Sidebar from '../../Component/Sidebar/Sidebar'
-import orderData from '../../Data';
+import Sidebar from '../../components/Sidebar/Sidebar'
+import orderData from '../../data/Data';
 import jumlahPenjualanIcons from '../../assets/Sell.png'
-import dummyDistributorNames from '../../DummyData';
+import dummyDistributorNames from '../../data/DummyData';
 import jumlahDistributorIcons from '../../assets/SellStock.png'
-import BarChart from '../../Component/Chart/BarChart';
-import LineChart from '../../Component/Chart/LineChart';
-import BarChart2 from '../../Component/Chart/BarChart2';
+import BarChart from '../../components/Chart/BarChart';
+import LineChart from '../../components/Chart/LineChart';
+import BarChart2 from '../../components/Chart/BarChart2';
 
 
 function AnalisisPage() {
