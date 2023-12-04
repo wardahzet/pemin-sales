@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
+// import Chart from 'chart.js/auto';
 
 const BarChart = () => {
     const chartRef = useRef(null);
@@ -7,25 +7,25 @@ const BarChart = () => {
     useEffect(() => {
         // Data contoh
         const data = {
-            labels: ['Jan', 'Feb', 'Maret', 'April', 'Mei', 'Juni', 'Jully', 'Agustus', 'September', 'Oktober', 'November','Desember'],
+            labels: ['Gasoline', 'Petroleum', 'Kerosin'],
             datasets: [
                 {
                     label: 'Gasoline',
-                    data: [12, 19, 3, 5, 2,10,12,10,13,14,15,16],
+                    data: [12, 19, 3],
                     backgroundColor: 'rgba(255, 106, 255, 100)',
                     borderColor: 'rgba(255, 106, 255, 100)',
                     borderWidth: 1,
                 },
                 {
                     label: 'Petroleum',
-                    data: [10,12,10,13,14,15,16,12, 19, 3, 5, 2,],
+                    data: [10,12,10],
                     backgroundColor: 'rgba(255, 213, 106, 100)',
                     borderColor: 'rgba(255, 213, 106, 100)',
                     borderWidth: 1,
                 },
                 {
                     label: 'Kerosin',
-                    data: [10,12,10,13, 19, 3, 5, 2,14,15,16,12,],
+                    data: [10,12,10,13],
                     backgroundColor: 'rgba(106, 255, 138, 100)',
                     borderColor: 'rgba(106, 255, 138, 100)',
                     borderWidth: 1,
@@ -44,7 +44,7 @@ const BarChart = () => {
 
         // Membuat chart
         const myChart = new Chart(chartRef.current, {
-            type: 'line',
+            type: 'bar',
             data: data,
             options: options,
         });
