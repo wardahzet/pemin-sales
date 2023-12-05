@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import { getProductData } from "../../services/Product";
 
 export default function ShowProduct() {
-  const dummyProductData = [
-    { id: 1, nama: "Produk A", qty: 10, harga: 1000 },
-    { id: 2, nama: "Produk B", qty: 5, harga: 1500 },
-    { id: 1, nama: "Produk A", qty: 10, harga: 1000 },
-    { id: 2, nama: "Produk B", qty: 5, harga: 1500 },
-    { id: 1, nama: "Produk A", qty: 10, harga: 1000 },
-  ];
-
-  const [productData, setProductData] = useState(dummyProductData);
+  const [productData, setProductData] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     document.title = "Product | MegaMinyak Energi";
+    getProductData()
+      .then((data) => {
+        setProductData(data.data);
+      })
+      .catch((error) => {
+        console.error("Error setting product data:", error);
+      });
   }, []);
+
+  const handleRowClick = (product) => {
+    setSelectedProduct(product);
+  };
 
   return (
     <div className="flex bg-[#E8EBF0]">
@@ -41,18 +46,18 @@ export default function ShowProduct() {
             </thead>
             <tbody className="text-center">
               {productData.map((product) => (
-                <tr key={product.id}>
+                <tr key={product.id} onClick={() => handleRowClick(product)} style={{ cursor: 'pointer' }}>
                   <td className="border-r-2 h-[50px] border-t-2 border-[#6A93FF]">
                     {product.id}
                   </td>
                   <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]">
-                    {product.nama}
+                    {product.nama_produk}
                   </td>
                   <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]">
-                    {product.qty}
+                    {product.stok}
                   </td>
                   <td className="border-l-2 h-[50px] border-t-2 border-[#6A93FF]">
-                    {product.harga}
+                    {product.harga + "000"}
                   </td>
                 </tr>
               ))}
