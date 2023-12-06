@@ -1,34 +1,57 @@
 import React, { useEffect, useRef } from 'react';
-// import Chart from 'chart.js/auto';
+import Chart from 'chart.js/auto';
 
-const LineChart = () => {
+const BarChart = ({totalSalesPerMonthAndProduct}) => {
     const chartRef = useRef(null);
+    const months = Object.keys(totalSalesPerMonthAndProduct);
+
+    const kerosinData = months.map(monthYearKey => {
+        const productData = totalSalesPerMonthAndProduct[monthYearKey]['3']; 
+        return productData ? productData.total_quantity : 0;
+      });
+    
+  
+      const petroleumData = months.map(monthYearKey => {
+        const productData = totalSalesPerMonthAndProduct[monthYearKey]['2']; 
+        return productData ? productData.total_quantity : 0;
+      });
+    
+      const gasolineData = months.map(monthYearKey => {
+        const productData = totalSalesPerMonthAndProduct[monthYearKey]['1']; 
+        return productData ? productData.total_quantity : 0;
+      });
+    
+    
 
     useEffect(() => {
-        // Updated data
+
         const data = {
-            labels: ['Gasoline', 'Petroleum', 'Kerosin'],
+            labels: months.map(monthYearKey => monthYearKey),
             datasets: [
                 {
-                    label: 'Dataset 1',
-                    data: [10, 20, 30], // Different data values for each label
-                    backgroundColor: [
-                        'rgba(255, 106, 255, 100)',
-                        'rgba(255, 213, 106, 100)',
-                        'rgba(106, 255, 138, 100)',
-                    ], // Different colors for each bar
-                    borderColor: [
-                        'rgba(255, 106, 255, 100)',
-                        'rgba(255, 213, 106, 100)',
-                        'rgba(106, 255, 138, 100)',
-                    ],
+                    label: 'Gasoline',
+                    data: gasolineData,
+                    backgroundColor: 'rgba(255, 106, 255, 100)',
+                    borderColor: 'rgba(255, 106, 255, 100)',
                     borderWidth: 1,
-                    labels: ['Gasoline', 'Petroleum', 'Kerosin'], // Labels for each color
+                },
+                {
+                    label: 'Petroleum',
+                    data: petroleumData,
+                    backgroundColor: 'rgba(255, 213, 106, 100)',
+                    borderColor: 'rgba(255, 213, 106, 100)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Kerosin',
+                    data: kerosinData,
+                    backgroundColor: 'rgba(106, 255, 138, 100)',
+                    borderColor: 'rgba(106, 255, 138, 100)',
+                    borderWidth: 1,
                 },
             ],
         };
 
-        // Konfigurasi chart
         const options = {
             scales: {
                 y: {
@@ -37,14 +60,12 @@ const LineChart = () => {
             },
         };
 
-        // Membuat chart
         const myChart = new Chart(chartRef.current, {
-            type: 'bar',
+            type: 'line',
             data: data,
             options: options,
         });
 
-        // Membersihkan chart saat komponen dibongkar
         return () => {
             myChart.destroy();
         };
@@ -54,7 +75,9 @@ const LineChart = () => {
         <div className='max-w-[400px] h-[500px]'>
             <canvas ref={chartRef} width={20} height={10}></canvas>
         </div>
-    );
+
+    )
+
 };
 
-export default LineChart;
+export default BarChart;
