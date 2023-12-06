@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  fetchProductOptions,
+  fetchDistributorOptions,
+  saveSalesData,
+} from "../../services/Sales";
 
 export default function AddSales() {
   const [tanggal, setTanggal] = useState("");
@@ -6,13 +12,41 @@ export default function AddSales() {
   const [jumlahProduk, setJumlahProduk] = useState("");
   const [distributor, setDistributor] = useState("");
   const [salesData, setSalesData] = useState([]);
+  const [productOptions, setProductOptions] = useState([]);
+  const [distributorOptions, setDistributorOptions] = useState([]);
+  const [summaryData, setSummaryData] = useState([]);
+  const [totalHarga, setTotalHarga] = useState(0);
+  const [selectedDistributorId, setSelectedDistributorId] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
     document.title = "Input Sales | MegaMinyak Energi";
+    fetchProductOptions();
+    fetchDistributorOptions();
   }, []);
+
+  useEffect(() => {
+    calculateTotalHarga();
+  }, [summaryData, productOptions]);
+
+  const calculateTotalHarga = () => {
+    let total = 0;
+    for (const data of summaryData) {
+      const selectedProduct = productOptions.find(
+        (product) => product.id === data.id_produk
+      );
+      if (selectedProduct) {
+        const totalPriceForRow =
+          selectedProduct.harga * parseInt(data.jumlahProduk, 10);
+        total += totalPriceForRow;
+      }
+    }
+    setTotalHarga(total);
+  };
 
   const handleTanggalChange = (e) => {
     setTanggal(e.target.value);
+    setSelectedDate(e.target.value);
   };
 
   const handleProdukChange = (e) => {
@@ -24,37 +58,109 @@ export default function AddSales() {
   };
 
   const handleDistributorChange = (e) => {
-    setDistributor(e.target.value);
+    const selectedDistributorName = e.target.value;
+    setDistributor(selectedDistributorName);
+
+    const selectedDistributor = distributorOptions.find(
+      (d) => d.nama_distributor === selectedDistributorName
+    );
+
+    if (selectedDistributor) {
+      setSelectedDistributorId(selectedDistributor.id);
+    }
   };
 
   const handleTambahClick = () => {
-    setSalesData([
-      ...salesData,
-      {
-        id: salesData.length + 1,
-        produk: produk,
-        jumlahProduk: jumlahProduk,
-        distributor: distributor,
-      },
-    ]);
-    setTanggal("");
-    setProduk("");
-    setJumlahProduk("");
-    setDistributor("");
+    try {
+      const selectedProduct = productOptions.find(
+        (product) => product.nama_produk === produk
+      );
+
+      if (selectedProduct) {
+        const selectedDistributor = distributorOptions.find(
+          (d) => d.nama_distributor === distributor
+        );
+
+        if (selectedDistributor) {
+          const summaryItem = {
+            id_produk: selectedProduct.id,
+            nama_produk: produk,
+            jumlahProduk: jumlahProduk,
+            nama_distributor: distributor,
+            id_distributor: selectedDistributor.id,
+          };
+
+          setSalesData([
+            ...salesData,
+            {
+              id_produk: selectedProduct.id,
+              produk: produk,
+              jumlahProduk: jumlahProduk,
+              distributor: distributor,
+            },
+          ]);
+
+          setSummaryData([...summaryData, summaryItem]);
+          setTanggal("");
+          setProduk("");
+          setJumlahProduk("");
+          setDistributor("");
+          setSelectedDistributorId("");
+        } else {
+          console.error("Selected distributor not found");
+        }
+      } else {
+        console.error("Selected product not found");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleKembaliClick = () => {};
-
-  const handleHapusClick = (id) => {
-    const updatedSalesData = salesData.filter((data) => data.id !== id);
-    setSalesData(updatedSalesData);
-  };
-
-  const handleResetClick = () => {
+  const handleReset = () => {
+    setSummaryData([]);
     setSalesData([]);
   };
 
-  const handleSimpanClick = () => {};
+  const handleHapus = (rowData) => {
+    const updatedSummaryData = summaryData.filter(
+      (item) => item !== rowData
+    );
+    const updatedSalesData = salesData.filter(
+      (item) => item !== rowData
+    );
+    setSummaryData(updatedSummaryData);
+    setSalesData(updatedSalesData);
+  };
+
+  const handleSimpan = async () => {
+    try {
+      const postDataArray = summaryData.map((data) => ({
+        tanggal_pemesanan: selectedDate,
+        jumlah: parseInt(data.jumlahProduk, 10),
+        distributor_id: data.id_distributor,
+        product_id: data.id_produk,
+      }));
+
+      const saveSuccess = await saveSalesData(postDataArray);
+
+      if (saveSuccess) {
+        alert("Data Penjualan Berhasil Tersimpan!");
+        setSelectedDate("");
+        setProduk("");
+        setJumlahProduk("");
+        setDistributor("");
+        setSalesData([]);
+        setSummaryData([]);
+        setSelectedDistributorId("");
+      } else {
+        alert("Error saving data. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving data:", error.message);
+      alert("Error saving data: " + error.message);
+    }
+  };
 
   return (
     <div className="bg-[#E8EBF0] p-10 min-h-screen w-full">
@@ -70,12 +176,12 @@ export default function AddSales() {
               </label>
               <input
                 type="date"
-                value={tanggal}
+                value={selectedDate}
                 onChange={handleTanggalChange}
                 className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               />
             </div>
-            <div className="mt-5">
+            <div className="mt-2">
               <label className="block text-sm font-medium text-gray-700">
                 Cari ID / Nama Produk:
               </label>
@@ -85,8 +191,11 @@ export default function AddSales() {
                 className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               >
                 <option>--Pilih--</option>
-                <option value="produk1">00918274 - Produk 1</option>
-                <option value="produk2">00918275 - Produk 2</option>
+                {productOptions.map((product) => (
+                  <option key={product.id} value={product.nama_produk}>
+                    {product.id} - {product.nama_produk}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -102,7 +211,7 @@ export default function AddSales() {
                 className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               />
             </div>
-            <div className="mt-5">
+            <div className="mt-2">
               <label className="block text-sm font-medium text-gray-700">
                 Distributor:
               </label>
@@ -112,13 +221,18 @@ export default function AddSales() {
                 className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               >
                 <option>--Pilih--</option>
-                <option value="distributor1">Distributor 1</option>
-                <option value="distributor2">Distributor 2</option>
+                {distributorOptions.map((distributor) => (
+                  <option
+                    key={distributor.id}
+                    value={distributor.nama_distributor}
+                  >
+                    {distributor.nama_distributor}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </div>
-
         <div className="flex justify-end mt-8">
           <button
             onClick={handleTambahClick}
@@ -127,7 +241,6 @@ export default function AddSales() {
             Tambah
           </button>
         </div>
-
         <div className="mt-10">
           <table className="w-full border-collapse border-2 border-[#6A93FF]">
             <thead>
@@ -140,25 +253,24 @@ export default function AddSales() {
               </tr>
             </thead>
             <tbody>
-              {salesData.map((data) => (
-                <tr key={data.id}>
+              {summaryData.map((data) => (
+                <tr key={data.id_produk}>
                   <td className="border-2 text-center border-[#6A93FF]">
-                    {data.id}
+                    {data.id_produk}
                   </td>
                   <td className="border-2 text-center border-[#6A93FF]">
-                    {data.produk}
+                    {data.nama_produk}
                   </td>
-                  <td className="border-2 text-center  border-[#6A93FF]">
+                  <td className="border-2 text-center border-[#6A93FF]">
                     {data.jumlahProduk}
                   </td>
-                  <td className="border-2 text-center  border-[#6A93FF]">
-                    {data.distributor}
+                  <td className="border-2 text-center border-[#6A93FF]">
+                    {data.nama_distributor}
                   </td>
                   <td className="border-2 text-center  border-[#6A93FF] p-2">
                     <button
-                      onClick={() => handleHapusClick(data.id)}
-                      className="
-                    bg-red-500 text-white px-2 py-1 text-[12px] rounded-md"
+                      className="bg-red-500 text-white px-2 py-1 text-[12px] rounded-md"
+                      onClick={() => handleHapus(data)}
                     >
                       Hapus
                     </button>
@@ -168,33 +280,32 @@ export default function AddSales() {
             </tbody>
           </table>
         </div>
-
         <div className="flex items-center justify-end mt-8">
           <label className="text-sm text-center font-medium text-gray-700">
             Total Harga :
           </label>
           <input
             type="number"
+            value={totalHarga + "000"}
             className="mt-2 ml-3 text-[15px] w-1/6 h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
+            readOnly
           />
         </div>
-
         <div className="flex items-center justify-between mt-10">
-          <button
-            onClick={handleKembaliClick}
-            className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold"
-          >
-            Kembali
-          </button>
+          <Link to="/sales">
+            <button className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold">
+              Kembali
+            </button>
+          </Link>
           <div className="flex gap-4">
             <button
-              onClick={handleResetClick}
+              onClick={handleReset}
               className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold"
             >
               Hapus
             </button>
             <button
-              onClick={handleSimpanClick}
+              onClick={handleSimpan}
               className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold"
             >
               Simpan
