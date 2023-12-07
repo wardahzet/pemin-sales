@@ -16,8 +16,10 @@ const router = createBrowserRouter(
     <>
       <Route path="/sales/add" element={<AddSales />} />,
       <Route path="/product" element={<ShowProduct />} />,
-      <Route path="/product/details" element={<DetailProduct />} />
+      <Route path="/product/:id" element={<DetailProduct />} />
       <Route path="/sales" element={<ShowSales />} />
+      
+      <Route path="/" element={<AnalisisPage />} /> 
 
       {/* ini punya al */}
       <Route path="/dashboard" element={<AnalisisPage />} /> 

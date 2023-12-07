@@ -1,4 +1,3 @@
-
 import React from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import jumlahPenjualanIcons from '../../assets/Sell.png'
@@ -153,8 +152,7 @@ function AnalisisPage() {
                         <div className='max-h-[240px] h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>
                             <div className='  w-full mb-2'>
-                                {/* <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct} /> */}
-                                <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct}/>
+                                <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct} />
                             </div>
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
