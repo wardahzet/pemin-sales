@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { getProductDetail } from "../../services/Product";
+import { useParams } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default function DetailProduct() {
-  const [namaProduk, setNamaProduk] = useState("");
-  const [hargaProduk, setHargaProduk] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-
+  const [produk, setProduk] = useState([]);
+  let { id } = useParams();
+  
   useEffect(() => {
-    document.title = "Penjualan | MegaMinyak Energi";
-  });
-
-  const handleNamaProdukChange = (e) => {
-    setNamaProduk(e.target.value);
-  };
-
-  const handleHargaProdukChange = (e) => {
-    setHargaProduk(e.target.value);
-  };
-
-  const handleDeskripsiChange = (e) => {
-    setDeskripsi(e.target.value);
-  };
-
-  const handleKembaliClick = () => {};
-
+    document.title = "Produk | MegaMinyak Energi";
+    getProductDetail(id)
+      .then((data) => {
+        setProduk(data.data);
+      })
+      .catch((err) => {
+        console.error("Error setting product data:", err);
+      });
+  }, [id]);
   return (
     <>
       <div className="bg-[#E8EBF0] p-10 h-screen w-full">
@@ -36,43 +30,35 @@ export default function DetailProduct() {
                 <label className="block text-sm font-medium text-gray-700">
                   Nama Produk :
                 </label>
-                <input
-                  type="text"
-                  value={namaProduk}
-                  onChange={handleNamaProdukChange}
-                  className="mt-2 text-[15px] w-[465px] h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
-                />
+                <div className="mt-2 text-[15px] w-[465px] h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md">
+                  {produk.nama_produk}
+                </div>
               </div>
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Harga Produk :
                 </label>
-                <input
-                  type="text"
-                  value={hargaProduk}
-                  onChange={handleHargaProdukChange}
-                  className="mt-2 text-[15px] w-[465px] h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
-                />
+                <div className="mt-2 text-[15px] w-[465px] h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md">
+                  {produk.harga}
+                </div>
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Deskripsi :
               </label>
-              <input
-                type="text"
-                value={deskripsi}
-                onChange={handleDeskripsiChange}
-                className="mt-2 text-[15px] w-[465px] h-[137px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
-              />
+              <div className="mt-2 text-[15px] w-[465px] h-[137px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md">
+                {produk.keterangan}
+              </div>
             </div>
             <div className="flex items-center justify-between mt-10">
-              <button
-                onClick={handleKembaliClick}
-                className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold"
-              >
-                Kembali
-              </button>
+              <Link to={`/product`}>
+                <button
+                  className="bg-[#FFD56A] w-[140px] text-black px-4 py-2 text-sm font-semibold"
+                >
+                  Kembali
+                </button>
+              </Link>
             </div>
           </div>
         </div>

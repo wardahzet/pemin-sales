@@ -48,8 +48,8 @@ const LineChart = ({ totalStockPerProduct }) => {
     }, [totalStockPerProduct]);
 
     return (
-        <div className='max-w-[400px] h-[500px]'>
-            <canvas ref={chartRef} width={20} height={10}></canvas>
+        <div className='max-w-[375px]'>
+            <canvas ref={chartRef} width={450}></canvas>
         </div>
     );
 };
