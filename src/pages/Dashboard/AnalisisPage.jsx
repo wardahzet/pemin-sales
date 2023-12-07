@@ -150,10 +150,8 @@ function AnalisisPage() {
                 <div className='flex grid-cols-2 gap-5'>
                     <div className='w-6/12'>
                         <div className='max-h-[240px] h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
-                            <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>
-                          
+                            <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>                          
                                 <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct}/>
-                         
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Total Stok Produk</div>
