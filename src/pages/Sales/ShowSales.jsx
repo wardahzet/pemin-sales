@@ -1,50 +1,58 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import { getSalesData } from "../../services/Sales";
 
 export default function ShowSales() {
-  const dummySalesData = [
-    {
-      id: 1,
-      tahun: 2023,
-      bulan: "Maret",
-      produk: "Produk A",
-      distributor: "Distributor X",
-      penjualan: 50,
-    },
-    {
-      id: 2,
-      tahun: 2023,
-      bulan: "Maret",
-      produk: "Produk B",
-      distributor: "Distributor Y",
-      penjualan: 25,
-    },
-    {
-      id: 3,
-      tahun: 2024,
-      bulan: "Januari",
-      produk: "Produk B",
-      distributor: "Distributor Y",
-      penjualan: 25,
-    },
-  ];
-
-  const [salesData, setSalesData] = useState(dummySalesData);
-
+  const [saleData, setSalesData] = useState([]);  
+  const [itahun, setTahun] = useState(0);
+  const [ibulan, setBulan] = useState(0);
+  const [iproduct, setProduct] = useState(0);
+  
   useEffect(() => {
     document.title = "Sales | MegaMinyak Energi";
+    getSalesData()
+      .then((data) => {
+        setSalesData(data.data);
+      })
+      .catch((err) => {
+        console.error("Error setting product data:", err);
+      });
   }, []);
 
-  const rowsByYearMonth = {};
-
-  dummySalesData.forEach((sale) => {
-    const key = `${sale.tahun}-${sale.bulan}`;
-
-    if (!rowsByYearMonth[key]) {
-      rowsByYearMonth[key] = [sale];
-    } else {
-      rowsByYearMonth[key].push(sale);
+  const arr = {};
+  const jumlah = {}
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+  
+  saleData.forEach((sale) => {
+    const date = new Date(sale.tanggal_pemesanan);
+    const tahun = date.getFullYear();
+    const bulan = monthNames[date.getMonth()];
+    const produk = sale.product.nama_produk;
+    const harga = sale.product.harga;
+    const distributor = sale.distributor.nama_distributor;
+    if (!arr[tahun]) {
+      arr[tahun] = {};
+      jumlah[`${tahun}`] = 0;
     }
+    if (!arr[tahun][bulan]) {
+      arr[tahun][bulan] = {};
+      jumlah[`${tahun}-${bulan}`] = 0;
+    }
+    if (!arr[tahun][bulan][produk]) {
+      arr[tahun][bulan][produk] = {};
+      jumlah[`${tahun}-${bulan}-${produk}`] = 0;
+    }
+    if (!arr[tahun][bulan][produk][distributor]) {
+      arr[tahun][bulan][produk][distributor] = 0;
+      jumlah[`${tahun}`]++;
+      jumlah[`${tahun}-${bulan}`]++;
+      jumlah[`${tahun}-${bulan}-${produk}`]++;
+    }
+  
+    arr[tahun][bulan][produk][distributor] += harga;
   });
 
   return (
@@ -78,39 +86,52 @@ export default function ShowSales() {
                 </th>
               </tr>
             </thead>
-            <tbody className="text-center">
-              {Object.keys(rowsByYearMonth).map((yearMonth) => (
-                <React.Fragment key={yearMonth}>
-                  {rowsByYearMonth[yearMonth].map((sale, index) => (
-                    <tr key={`${sale.id}-${yearMonth}-${index}`}>
+            
+            <tbody>
+              {Object.keys(arr).map((tahun) => (
+                Object.keys(arr[tahun]).map((bulan,indexbulan) => ( 
+                  Object.keys(arr[tahun][bulan]).map((produk,indexproduk) => (  
+                    Object.keys(arr[tahun][bulan][produk]).map((distributor,index) => (  
+                      <>
+                      <tr key={`${tahun}`}>     
+
+                      {index === 0 && indexproduk === 0 && indexbulan === 0 ? (                              
+                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                          rowSpan={jumlah[`${tahun}`]}
+                        >
+                          {tahun}
+                        </td>                            
+                      ): null}
+
+                      {indexproduk === 0 && index === 0 ? (
+                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                        rowSpan={jumlah[`${tahun}-${bulan}`]}
+                        >
+                        {bulan}                        
+                        </td>                         
+                      ): null}
+
                       {index === 0 ? (
-                        <>
-                          <td
-                            className="border-r-2 h-[50px] border-t-2 border-[#6A93FF]"
-                            rowSpan={rowsByYearMonth[yearMonth].length}
-                          >
-                            {sale.tahun}
-                          </td>
-                          <td
-                            className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
-                            rowSpan={rowsByYearMonth[yearMonth].length}
-                          >
-                            {sale.bulan}
-                          </td>
-                        </>
-                      ) : null}
+                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                        rowSpan={                          
+                          jumlah[`${tahun}-${bulan}-${produk}`]
+                        }
+                        >
+                        {produk}                        
+                        </td>                           
+                      ): null}
+                    
                       <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]">
-                        {sale.produk}
-                      </td>
-                      <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]">
-                        {sale.distributor}
+                        {distributor}
                       </td>
                       <td className="border-l-2 h-[50px] border-t-2 border-[#6A93FF]">
-                        {sale.penjualan}
-                      </td>
-                    </tr>
-                  ))}
-                </React.Fragment>
+                        {arr[tahun][bulan][produk][distributor]}
+                      </td>   
+                      </tr>               
+                      </>
+                    ))
+                  ))
+                ))    
               ))}
             </tbody>
           </table>
@@ -119,3 +140,4 @@ export default function ShowSales() {
     </div>
   );
 }
+
