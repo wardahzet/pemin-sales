@@ -5,51 +5,89 @@ import jumlahDistributorIcons from '../../assets/SellStock.png'
 import BarChart from '../../components/Chart/LineChart';
 import BarChart2 from '../../components/Chart/BarChart2';
 import LineChart from '../../components/Chart/BarChart';
-
+import { useState, useEffect } from 'react';
 
 function AnalisisPage() {
-    const distributorData = [
-        { id: 1, nama_distributor: 'Shell' },
-        { id: 2, nama_distributor: 'Petamina' },
-        { id: 3, nama_distributor: 'Petronas' },
+    
+    const [sale, setSale] = useState([]);
 
-    ];
-    const dummyProductData = [
-        { id: 1, nama_produk: 'Gasoline', stok: 10, harga: 100.0, keterangan: 'Deskripsi Produk A' },
-        { id: 2, nama_produk: 'Petrolium', stok: 20, harga: 150.0, keterangan: 'Deskripsi Produk B' },
-        { id: 3, nama_produk: 'Kerosin', stok: 15, harga: 120.0, keterangan: 'Deskripsi Produk C' },
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/pemin/sale'); // Ganti URL dengan endpoint yang sesuai
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const jsonData = await response.json();
+                console.log(jsonData.data);
+                setSale(jsonData.data);
 
-    ];
-    const dummySalesData = [
-        { id: 1, tanggal_pemesanan: '2023-10-01', jumlah: 5, distributor_id: 1, product_id: 1 },
-        { id: 2, tanggal_pemesanan: '2023-10-02', jumlah: 10, distributor_id: 2, product_id: 2 },
-        { id: 3, tanggal_pemesanan: '2023-10-03', jumlah: 8, distributor_id: 3, product_id: 3 },
-        { id: 4, tanggal_pemesanan: '2023-12-11', jumlah: 3, distributor_id: 1, product_id: 1 },
-        { id: 5, tanggal_pemesanan: '2023-12-12', jumlah: 15, distributor_id: 2, product_id: 1 },
-        { id: 6, tanggal_pemesanan: '2024-12-14', jumlah: 7, distributor_id: 3, product_id: 1 },
-        { id: 7, tanggal_pemesanan: '2023-12-01', jumlah: 5, distributor_id: 1, product_id: 2 },
-        { id: 8, tanggal_pemesanan: '2023-12-02', jumlah: 10, distributor_id: 2, product_id: 2 },
-        { id: 9, tanggal_pemesanan: '2023-12-03', jumlah: 8, distributor_id: 3, product_id: 2 },
-        { id: 10, tanggal_pemesanan: '2023-12-04', jumlah: 3, distributor_id: 1, product_id: 3 },
-        { id: 11, tanggal_pemesanan: '2023-12-11', jumlah: 15, distributor_id: 2, product_id: 1 },
-        { id: 12, tanggal_pemesanan: '2023-12-12', jumlah: 10, distributor_id: 2, product_id: 3 },
-        { id: 13, tanggal_pemesanan: '2023-12-13', jumlah: 12, distributor_id: 3, product_id: 1 },
-        { id: 14, tanggal_pemesanan: '2023-12-14', jumlah: 12, distributor_id: 3, product_id: 3 },
-        { id: 15, tanggal_pemesanan: '2024-01-01', jumlah: 7, distributor_id: 3, product_id: 2 },
-        { id: 15, tanggal_pemesanan: '2024-01-02', jumlah: 12, distributor_id: 1, product_id: 2 },
+                // Cetak respons ke konsol
+                console.log('Data from endpoint:', jsonData);
+            } catch (error) {
+                console.error('There was an error:', error);
+            }
+        };
 
-    ];
-    const totalSales = dummySalesData.reduce((acc, sale) => acc + sale.jumlah, 0);
-    const distributorIdsFromSales = dummySalesData.map(sale => sale.distributor_id);
-    const uniqueDistributorIds = Array.from(new Set(distributorIdsFromSales));
-    const totalDistributors = uniqueDistributorIds.length;
+        fetchData();
+    }, []);
+
+    const [distributor, setDistributor] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/pemin/distributor'); // Ganti URL dengan endpoint yang sesuai
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const jsonData = await response.json();
+                console.log(jsonData.data);
+                setDistributor(jsonData.data);
+
+                // Cetak respons ke konsol
+                console.log('Data from endpoint:', jsonData);
+            } catch (error) {
+                console.error('There was an error:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const [produk, setProduk] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/pemin/product'); // Ganti URL dengan endpoint yang sesuai
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const jsonData = await response.json();
+                console.log(jsonData.data);
+                setProduk(jsonData.data);
+
+                // Cetak respons ke konsol
+                console.log('Data from endpoint:', jsonData);
+            } catch (error) {
+                console.error('There was an error:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
 
-    const totalSalesPerMonthAndProduct = dummySalesData.reduce((acc, sale) => {
+    const totalSales = sale.reduce((acc, sale) => acc + sale.jumlah, 0);
+    const dataDistributor = distributor.length;
+
+
+    const totalSalesPerMonthAndProduct = sale.reduce((acc, sale) => {
         const saleDate = new Date(sale.tanggal_pemesanan);
         const monthYearKey = `${saleDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })} ${saleDate.getFullYear()}`;
         acc[monthYearKey] = acc[monthYearKey] || {};
-        const product = dummyProductData.find(product => product.id === sale.product_id);
+        const product = produk.find(product => product.id === sale.product_id);
         if (!acc[monthYearKey][sale.product_id]) {
             acc[monthYearKey][sale.product_id] = {
                 product_name: product ? product.nama_produk : 'Unknown Product',
@@ -60,19 +98,16 @@ function AnalisisPage() {
 
         return acc;
     }, {});
+    console.log(totalSalesPerMonthAndProduct);
 
 
     const totalStockPerProduct = {};
-    dummySalesData.forEach(sale => {
-        const productId = sale.product_id;
-        const product = dummyProductData.find(product => product.id === productId);
 
-        if (product) {
-            const productName = product.nama_produk;
-            const productStock = product.stok;
+    produk.forEach(product => {
+        const productName = product.nama_produk;
+        const productStock = product.stok;
 
-            totalStockPerProduct[productName] = (totalStockPerProduct[productName] || 0) + productStock;
-        }
+        totalStockPerProduct[productName] = productStock;
     });
 
     console.log('Total Stock Per Product:', totalStockPerProduct);
@@ -80,33 +115,35 @@ function AnalisisPage() {
 
     const distributionForCurrentMonth = [];
     const currentMonthYear = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
-
-    dummySalesData.forEach(sale => {
-        const productId = sale.product_id;
-        const product = dummyProductData.find(product => product.id === productId);
-        const distributorId = sale.distributor_id;
-        const distributor = distributorData.find(distributor => distributor.id === distributorId);
-
-        if (product && distributor) {
-            const monthYearKey = new Date(sale.tanggal_pemesanan).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
-            if (monthYearKey === currentMonthYear) {
-                const productName = product.nama_produk;
-                const distributorName = distributor.nama_distributor;
-                const quantity = sale.jumlah;
-
-                distributionForCurrentMonth.push({ distributorName, productName, quantity });
-            }
+    
+    sale.forEach(saleItem => {
+      const productId = saleItem.product_id;
+      const product = produk.find(product => product.id === productId);
+      const distributorId = saleItem.distributor_id;
+      const distributorInfo = distributor.find(distributor => distributor.id === distributorId);
+    
+      if (product && distributorInfo) {
+        const monthYearKey = new Date(saleItem.tanggal_pemesanan).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
+        if (monthYearKey === currentMonthYear) {
+          const productName = product.nama_produk;
+          const distributorName = distributorInfo.nama_distributor;
+          const quantity = saleItem.jumlah;
+    
+          distributionForCurrentMonth.push({ distributorName, productName, quantity });
         }
+      }
     });
+    
+    console.log('Distribution for Current Month:', distributionForCurrentMonth);
 
-    console.log(`Distribution for ${currentMonthYear}:`, distributionForCurrentMonth);
+
 
 
 
     return (
         <div className='flex w-screen h-screen bg-[#E8EBF0] '>
-         
-                <Sidebar />
+
+            <Sidebar />
 
             <div className='w-10/12   mx-[20px] my-[27px] '>
                 <div className='w-full h-[86px] bg-blue-500 rounded-t-lg mb-2 text-white font-medium text-[30px] px-5 flex items-center '>Analisis</div>
@@ -134,7 +171,7 @@ function AnalisisPage() {
                                 <img src={jumlahPenjualanIcons} alt="" />
                             </div>
                             <div className='h-[110px] border-full border-blue-400 border-2 rounded-lg mb-4 flex justify-center items-center bg-white'>
-                                <div className='font-bold text-[32px] mr-[42px]'>{totalDistributors}</div>
+                                <div className='font-bold text-[32px] mr-[42px]'>{dataDistributor}</div>
                                 <div className='font-normal text-xl mr-[42px]'>Jumlah Distributor</div>
                                 <img src={jumlahDistributorIcons} alt="" />
                             </div>
