@@ -8,7 +8,7 @@ import LineChart from '../../components/Chart/BarChart';
 import { useState, useEffect } from 'react';
 
 function AnalisisPage() {
-    
+
     const [sale, setSale] = useState([]);
 
     useEffect(() => {
@@ -68,7 +68,7 @@ function AnalisisPage() {
                 console.log(jsonData.data);
                 setProduk(jsonData.data);
 
-                // Cetak respons ke konsol
+        
                 console.log('Data from endpoint:', jsonData);
             } catch (error) {
                 console.error('There was an error:', error);
@@ -115,25 +115,25 @@ function AnalisisPage() {
 
     const distributionForCurrentMonth = [];
     const currentMonthYear = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
-    
+
     sale.forEach(saleItem => {
-      const productId = saleItem.product_id;
-      const product = produk.find(product => product.id === productId);
-      const distributorId = saleItem.distributor_id;
-      const distributorInfo = distributor.find(distributor => distributor.id === distributorId);
-    
-      if (product && distributorInfo) {
-        const monthYearKey = new Date(saleItem.tanggal_pemesanan).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
-        if (monthYearKey === currentMonthYear) {
-          const productName = product.nama_produk;
-          const distributorName = distributorInfo.nama_distributor;
-          const quantity = saleItem.jumlah;
-    
-          distributionForCurrentMonth.push({ distributorName, productName, quantity });
+        const productId = saleItem.product_id;
+        const product = produk.find(product => product.id === productId);
+        const distributorId = saleItem.distributor_id;
+        const distributorInfo = distributor.find(distributor => distributor.id === distributorId);
+
+        if (product && distributorInfo) {
+            const monthYearKey = new Date(saleItem.tanggal_pemesanan).toLocaleDateString('en-US', { year: 'numeric', month: 'numeric' });
+            if (monthYearKey === currentMonthYear) {
+                const productName = product.nama_produk;
+                const distributorName = distributorInfo.nama_distributor;
+                const quantity = saleItem.jumlah;
+
+                distributionForCurrentMonth.push({ distributorName, productName, quantity });
+            }
         }
-      }
     });
-    
+
     console.log('Distribution for Current Month:', distributionForCurrentMonth);
 
 
@@ -150,8 +150,11 @@ function AnalisisPage() {
                 <div className='flex grid-cols-2 gap-5'>
                     <div className='w-6/12'>
                         <div className='max-h-[240px] h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
-                            <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>                          
-                                <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct}/>
+                            <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>
+                            <div>
+                                <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct} />
+                            </div>
+
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Total Stok Produk</div>
