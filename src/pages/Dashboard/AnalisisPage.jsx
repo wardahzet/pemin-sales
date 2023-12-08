@@ -151,16 +151,15 @@ function AnalisisPage() {
                     <div className='w-6/12'>
                         <div className='max-h-[240px] h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal  text-xl text-center mb-2'>Total penjualan produk per bulan</div>
-                            <div>
+                            <div className="flex justify-center">
                                 <BarChart totalSalesPerMonthAndProduct={totalSalesPerMonthAndProduct} />
                             </div>
 
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Total Stok Produk</div>
-                            <div className=' w-full mb-2'>
+                            <div className='flex justify-center w-full mb-2'>
                                 <LineChart totalStockPerProduct={totalStockPerProduct} />
-
                             </div>
                         </div>
                     </div>
@@ -179,7 +178,7 @@ function AnalisisPage() {
                         </div>
                         <div className='h-[240px] border-full border-blue-400 border-2 rounded-lg mb-3 py-2 bg-white'>
                             <div className='font-normal text-xl text-center mb-2'>Distribusi produk ke distributor per bulan</div>
-                            <div className=' w-full mb-2'>
+                            <div className='flex justify-center w-full mb-2'>
                                 <BarChart2 data={distributionForCurrentMonth} />
                             </div>
                         </div>

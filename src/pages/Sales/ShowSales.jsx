@@ -29,7 +29,7 @@ export default function ShowSales() {
     const tahun = date.getFullYear();
     const bulan = monthNames[date.getMonth()];
     const produk = sale.product.nama_produk;
-    const harga = sale.product.harga;
+    const harga = sale.product.harga*1000;
     const distributor = sale.distributor.nama_distributor;
     if (!arr[tahun]) {
       arr[tahun] = {};
@@ -96,7 +96,7 @@ export default function ShowSales() {
                       <tr key={`${tahun}`}>     
 
                       {index === 0 && indexproduk === 0 && indexbulan === 0 ? (                              
-                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                        <td className="border-r-2 h-[50px] text-center border-t-2 border-[#6A93FF]"
                           rowSpan={jumlah[`${tahun}`]}
                         >
                           {tahun}
@@ -104,7 +104,7 @@ export default function ShowSales() {
                       ): null}
 
                       {indexproduk === 0 && index === 0 ? (
-                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                        <td className="border-x-2 h-[50px] text-center border-t-2 border-[#6A93FF]"
                         rowSpan={jumlah[`${tahun}-${bulan}`]}
                         >
                         {bulan}                        
@@ -112,7 +112,7 @@ export default function ShowSales() {
                       ): null}
 
                       {index === 0 ? (
-                        <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]"
+                        <td className="border-x-2 h-[50px] text-center border-t-2 border-[#6A93FF]"
                         rowSpan={                          
                           jumlah[`${tahun}-${bulan}-${produk}`]
                         }
@@ -121,10 +121,10 @@ export default function ShowSales() {
                         </td>                           
                       ): null}
                     
-                      <td className="border-x-2 h-[50px] border-t-2 border-[#6A93FF]">
+                      <td className="border-x-2 text-center h-[50px] border-t-2 border-[#6A93FF]">
                         {distributor}
                       </td>
-                      <td className="border-l-2 h-[50px] border-t-2 border-[#6A93FF]">
+                      <td className="border-l-2 text-center h-[50px] border-t-2 border-[#6A93FF]">
                         {arr[tahun][bulan][produk][distributor]}
                       </td>   
                       </tr>               
