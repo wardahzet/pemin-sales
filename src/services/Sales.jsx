@@ -55,3 +55,14 @@ export const saveSalesData = async (postDataArray) => {
     return false;
   }
 };
+
+export const getSalesData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/sale`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw error;
+  }
+};

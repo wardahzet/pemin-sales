@@ -1,60 +1,80 @@
 import React, { useEffect, useRef } from 'react';
-// import Chart from 'chart.js/auto';
+import Chart from 'chart.js/auto';
 
-const LineChart = () => {
-    const chartRef = useRef(null);
+const LineChart = ({ totalSalesPerMonthAndProduct }) => {
+  const chartRef = useRef(null);
+  const months = Object.keys(totalSalesPerMonthAndProduct);
 
-    useEffect(() => {
-        // Updated data
-        const data = {
-            labels: ['Gasoline', 'Petroleum', 'Kerosin'],
-            datasets: [
-                {
-                    label: 'Dataset 1',
-                    data: [10, 20, 30], // Different data values for each label
-                    backgroundColor: [
-                        'rgba(255, 106, 255, 100)',
-                        'rgba(255, 213, 106, 100)',
-                        'rgba(106, 255, 138, 100)',
-                    ], // Different colors for each bar
-                    borderColor: [
-                        'rgba(255, 106, 255, 100)',
-                        'rgba(255, 213, 106, 100)',
-                        'rgba(106, 255, 138, 100)',
-                    ],
-                    borderWidth: 1,
-                    labels: ['Gasoline', 'Petroleum', 'Kerosin'], // Labels for each color
-                },
-            ],
-        };
+  const kerosinData = months.map(monthYearKey => {
+    const productData = totalSalesPerMonthAndProduct[monthYearKey]['3'];
+    return productData ? productData.total_quantity : 0;
+  });
 
-        // Konfigurasi chart
-        const options = {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                },
-            },
-        };
+  const petroleumData = months.map(monthYearKey => {
+    const productData = totalSalesPerMonthAndProduct[monthYearKey]['2'];
+    return productData ? productData.total_quantity : 0;
+  });
 
-        // Membuat chart
-        const myChart = new Chart(chartRef.current, {
-            type: 'bar',
-            data: data,
-            options: options,
-        });
+  const gasolineData = months.map(monthYearKey => {
+    const productData = totalSalesPerMonthAndProduct[monthYearKey]['1'];
+    return productData ? productData.total_quantity : 0;
+  });
 
-        // Membersihkan chart saat komponen dibongkar
-        return () => {
-            myChart.destroy();
-        };
-    }, []);
+  useEffect(() => {
+    const data = {
+      labels: months.map(monthYearKey => monthYearKey),
+      datasets: [
+        {
+          label: 'Gasoline',
+          data: gasolineData,
+          backgroundColor: 'rgba(255, 106, 255, 0.5)',
+          borderColor: 'rgba(255, 106, 255, 1)',
+          borderWidth: 1,
+          fill: false,
+        },
+        {
+          label: 'Petroleum',
+          data: petroleumData,
+          backgroundColor: 'rgba(255, 213, 106, 0.5)',
+          borderColor: 'rgba(255, 213, 106, 1)',
+          borderWidth: 1,
+          fill: false,
+        },
+        {
+          label: 'Kerosin',
+          data: kerosinData,
+          backgroundColor: 'rgba(106, 255, 138, 0.5)',
+          borderColor: 'rgba(106, 255, 138, 1)',
+          borderWidth: 1,
+          fill: false,
+        },
+      ],
+    };
 
-    return (
-        <div className='max-w-[400px] h-[500px]'>
-            <canvas ref={chartRef} width={20} height={10}></canvas>
-        </div>
-    );
+    const options = {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+
+    const myChart = new Chart(chartRef.current, {
+      type: 'line',
+      data: data,
+      options: options,
+    });
+
+    return () => {
+      myChart.destroy();
+    };
+  }, [totalSalesPerMonthAndProduct]); 
+
+  return (
+    <div className='max-w-[375px]'>
+      <canvas ref={chartRef} width={450}></canvas>
+    </div>
+  );
 };
 
 export default LineChart;

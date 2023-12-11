@@ -65,7 +65,7 @@ export default function ShowProduct() {
           </table>
         </div>
         <div className="mt-7">
-          <p className="text-sm font-medium text-gray-800">* per Kilo Liter</p>
+          <p className="text-sm font-medium text-gray-800">* per Kiloliter</p>
           <p className="text-sm font-medium text-gray-800 mt-2">** Rupiah</p>
         </div>
       </div>

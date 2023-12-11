@@ -1,39 +1,52 @@
 import React, { useEffect, useRef } from 'react';
-// import Chart from 'chart.js/auto';
+import Chart from 'chart.js/auto';
 
-const BarChart = () => {
+const BarChart = ({ data }) => {
     const chartRef = useRef(null);
 
     useEffect(() => {
-        // Data contoh
-        const data = {
-            labels: ['Gasoline', 'Petroleum', 'Kerosin'],
-            datasets: [
-                {
-                    label: 'Gasoline',
-                    data: [12, 19, 3],
-                    backgroundColor: 'rgba(255, 106, 255, 100)',
-                    borderColor: 'rgba(255, 106, 255, 100)',
-                    borderWidth: 1,
-                },
-                {
-                    label: 'Petroleum',
-                    data: [10,12,10],
-                    backgroundColor: 'rgba(255, 213, 106, 100)',
-                    borderColor: 'rgba(255, 213, 106, 100)',
-                    borderWidth: 1,
-                },
-                {
-                    label: 'Kerosin',
-                    data: [10,12,10,13],
-                    backgroundColor: 'rgba(106, 255, 138, 100)',
-                    borderColor: 'rgba(106, 255, 138, 100)',
-                    borderWidth: 1,
-                },
-            ],
+        // Extracting unique product names and distributor names from the data
+        const productNames = [...new Set(data.map(item => item.productName))];
+        const distributorNames = [...new Set(data.map(item => item.distributorName))];
+
+    
+        const datasets = productNames.map((productName, index) => {
+            const quantities = distributorNames.map(distributorName => {
+                const dataPoint = data.find(item => item.productName === productName && item.distributorName === distributorName);
+                return dataPoint ? dataPoint.quantity : 0;
+            });
+
+           
+            let backgroundColor, borderColor;
+
+            if (productName === 'Gasoline') {
+                backgroundColor = 'rgba(255, 104, 233, 1)';
+                borderColor = 'rgba(255, 104, 233, 1)';
+            } else if (productName === 'Petrolium') {
+                backgroundColor = 'rgba(255, 213, 106, 1)';
+                borderColor = 'rgba(255, 213, 106, 1)';
+            } else if (productName === 'Kerosin') {
+                backgroundColor = 'rgba(106, 255, 138, 1)';
+                borderColor = 'rgba(106, 255, 138, 1)';
+            } else {
+                backgroundColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`;
+                borderColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`;
+            }
+            return {
+                label: productName,
+                data: quantities,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
+            };
+        });
+
+    
+        const dataConfig = {
+            labels: distributorNames,
+            datasets: datasets,
         };
 
-        // Konfigurasi chart
         const options = {
             scales: {
                 y: {
@@ -42,26 +55,21 @@ const BarChart = () => {
             },
         };
 
-        // Membuat chart
         const myChart = new Chart(chartRef.current, {
             type: 'bar',
-            data: data,
+            data: dataConfig,
             options: options,
         });
-
-        // Membersihkan chart saat komponen dibongkar
         return () => {
             myChart.destroy();
         };
-    }, []);
+    }, [data]);
 
     return (
-        <div className='max-w-[400px] h-[500px]'>
-            <canvas ref={chartRef} width={20} height={10}></canvas>
+        <div className='max-w-[375px]'>
+            <canvas ref={chartRef} width={450}></canvas>
         </div>
-
-    )
-
+    );
 };
 
 export default BarChart;

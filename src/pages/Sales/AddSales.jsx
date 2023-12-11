@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  fetchProductOptions,
-  fetchDistributorOptions,
-  saveSalesData,
-} from "../../services/Sales";
 
 export default function AddSales() {
   const [tanggal, setTanggal] = useState("");
@@ -42,6 +37,48 @@ export default function AddSales() {
       }
     }
     setTotalHarga(total);
+  };
+
+  const fetchProductOptions = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/pemin/product");
+      const result = await response.json();
+      // console.log("Product Options Response:", result);
+      if (result.status === "success" && Array.isArray(result.data)) {
+        setProductOptions(result.data);
+      } else {
+        console.error(
+          "Invalid product options format. Expected an array, received:",
+          result
+        );
+        setProductOptions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching product options:", error);
+      setProductOptions([]);
+    }
+  };
+
+  const fetchDistributorOptions = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/pemin/distributor"
+      );
+      const result = await response.json();
+      // console.log("Distributor Options Response:", result);
+      if (result.status === "success" && Array.isArray(result.data)) {
+        setDistributorOptions(result.data);
+      } else {
+        console.error(
+          "Invalid distributor options format. Expected an array, received:",
+          result
+        );
+        setDistributorOptions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching distributor options:", error);
+      setDistributorOptions([]);
+    }
   };
 
   const handleTanggalChange = (e) => {
@@ -141,21 +178,30 @@ export default function AddSales() {
         distributor_id: data.id_distributor,
         product_id: data.id_produk,
       }));
-
-      const saveSuccess = await saveSalesData(postDataArray);
-
-      if (saveSuccess) {
-        alert("Data Penjualan Berhasil Tersimpan!");
-        setSelectedDate("");
-        setProduk("");
-        setJumlahProduk("");
-        setDistributor("");
-        setSalesData([]);
-        setSummaryData([]);
-        setSelectedDistributorId("");
-      } else {
-        alert("Error saving data. Please try again.");
+      console.log("Data to be sent:", postDataArray);
+      for (const postData of postDataArray) {
+        const response = await fetch("http://localhost:8000/api/pemin/sale", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        });
+        const result = await response.json();
+        if (result.status !== "success") {
+          console.error("Failed to save data for a row:", result.error);
+          return;
+        }
+        console.log("Data saved successfully for a row:", postData);
       }
+      alert("Data Penjualan Berhasil Tersimpan!");
+      setSelectedDate("");
+      setProduk("");
+      setJumlahProduk("");
+      setDistributor("");
+      setSalesData([]);
+      setSummaryData([]);
+      setSelectedDistributorId("");
     } catch (error) {
       console.error("Error saving data:", error.message);
       alert("Error saving data: " + error.message);
@@ -188,7 +234,7 @@ export default function AddSales() {
               <select
                 value={produk}
                 onChange={handleProdukChange}
-                className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
+                className="mt-2 text-[15px] w-full h-[40px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               >
                 <option>--Pilih--</option>
                 {productOptions.map((product) => (
@@ -218,7 +264,7 @@ export default function AddSales() {
               <select
                 value={distributor}
                 onChange={handleDistributorChange}
-                className="mt-2 text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
+                className="mt-2 h-[40px] text-[15px] w-full h-[35px] px-3 font-[15px] border-2 border-[#6A93FF] rounded-md focus:outline-none"
               >
                 <option>--Pilih--</option>
                 {distributorOptions.map((distributor) => (
